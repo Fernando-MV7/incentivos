@@ -15,12 +15,12 @@ services:
     networks:
       - backend
 
-  eureka-server:
+  server:
     build: 
       context: .
-      dockerfile: eureka-server/Dockerfile
+      dockerfile: server/Dockerfile
       args:
-        - APP_NAME=eureka-server
+        - APP_NAME=server
         - APP_VERSION=1.0.0
     ports:
       - "8761:8761"
@@ -36,7 +36,7 @@ services:
         - APP_VERSION=1.0.0
     depends_on:
       - postgres
-      - eureka-server
+      - server
     environment:
       - SPRING_PROFILE=produccion
     networks:
@@ -51,7 +51,7 @@ services:
         - APP_VERSION=1.0.0
     depends_on:
       - postgres
-      - eureka-server
+      - server
     environment:
       - SPRING_PROFILE=produccion
     networks:
@@ -66,7 +66,7 @@ services:
         - APP_VERSION=1.0.0
     depends_on:
       - postgres
-      - eureka-server
+      - server
     environment:
       - SPRING_PROFILE=produccion
     networks:
@@ -81,7 +81,7 @@ services:
         - APP_VERSION=1.0.0
     depends_on:
       - postgres
-      - eureka-server
+      - server
     environment:
       - SPRING_PROFILE=produccion
     networks:
@@ -96,7 +96,7 @@ services:
         - APP_VERSION=1.0.0
     depends_on:
       - postgres
-      - eureka-server
+      - server
     environment:
       - SPRING_PROFILE=produccion
     networks:
@@ -112,7 +112,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - eureka-server
+      - server
     networks:
       - backend
 

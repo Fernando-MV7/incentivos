@@ -10,6 +10,7 @@ COPY ${APP_NAME}/mvnw .
 COPY ${APP_NAME}/pom.xml .
 RUN chmod +x mvnw
 
+
 COPY ${APP_NAME}/src ./src
 
 RUN ./mvnw clean package -DskipTests
