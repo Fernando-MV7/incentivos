@@ -14,11 +14,12 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     networks:
       - backend
+    restart: unless-stopped
 
   server:
     build: 
       context: .
-      dockerfile: server/Dockerfile
+      dockerfile: Dockerfile
       args:
         - APP_NAME=server
         - APP_VERSION=1.0.0
@@ -26,11 +27,12 @@ services:
       - "8761:8761"
     networks:
       - backend
+    restart: unless-stopped
 
   actividades:
     build: 
       context: .
-      dockerfile: actividades/Dockerfile
+      dockerfile: Dockerfile
       args:
         - APP_NAME=actividades
         - APP_VERSION=1.0.0
@@ -41,11 +43,12 @@ services:
       - SPRING_PROFILE=produccion
     networks:
       - backend
+    restart: unless-stopped
 
   login:
     build: 
       context: .
-      dockerfile: login/Dockerfile
+      dockerfile: Dockerfile
       args:
         - APP_NAME=login
         - APP_VERSION=1.0.0
@@ -56,11 +59,12 @@ services:
       - SPRING_PROFILE=produccion
     networks:
       - backend
+    restart: unless-stopped
   
   registros:
     build: 
       context: .
-      dockerfile: registros/Dockerfile
+      dockerfile: Dockerfile
       args:
         - APP_NAME=registros
         - APP_VERSION=1.0.0
@@ -71,11 +75,12 @@ services:
       - SPRING_PROFILE=produccion
     networks:
       - backend
+    restart: unless-stopped
   
   socios:
     build: 
       context: .
-      dockerfile: socios/Dockerfile
+      dockerfile: Dockerfile
       args:
         - APP_NAME=socios
         - APP_VERSION=1.0.0
@@ -86,11 +91,12 @@ services:
       - SPRING_PROFILE=produccion
     networks:
       - backend
+    restart: unless-stopped
 
   sociosexcel:
     build: 
       context: .
-      dockerfile: sociosexcel/Dockerfile
+      dockerfile: Dockerfile
       args:
         - APP_NAME=sociosexcel
         - APP_VERSION=1.0.0
@@ -101,11 +107,12 @@ services:
       - SPRING_PROFILE=produccion
     networks:
       - backend
+    restart: unless-stopped
   
   gateway:
     build: 
       context: .
-      dockerfile: gateway/Dockerfile
+      dockerfile: Dockerfile
       args:
         - APP_NAME=gateway
         - APP_VERSION=1.0.0
@@ -115,6 +122,7 @@ services:
       - server
     networks:
       - backend
+    restart: unless-stopped
 
   # Frontend
   frontend:
@@ -126,6 +134,8 @@ services:
       - gateway
     networks:
       - frontend
+      - backend
+    restart: unless-stopped
 
 networks:
   backend:
