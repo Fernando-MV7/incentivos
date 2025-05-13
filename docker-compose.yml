@@ -34,6 +34,8 @@ services:
       args:
         - APP_NAME=actividades
         - APP_VERSION=1.0.0
+    ports:
+      - "8082:8082"
     depends_on:
       - postgres
       - server
@@ -49,6 +51,8 @@ services:
       args:
         - APP_NAME=login
         - APP_VERSION=1.0.0
+    ports:
+      - "8081:8081"
     depends_on:
       - postgres
       - server
@@ -64,6 +68,8 @@ services:
       args:
         - APP_NAME=registros
         - APP_VERSION=1.0.0
+    ports:
+      - "8085:8085"
     depends_on:
       - postgres
       - server
@@ -79,6 +85,8 @@ services:
       args:
         - APP_NAME=socios
         - APP_VERSION=1.0.0
+    ports:
+      - "8083:8083"
     depends_on:
       - postgres
       - server
@@ -94,6 +102,8 @@ services:
       args:
         - APP_NAME=sociosexcel
         - APP_VERSION=1.0.0
+    ports:
+      - "8084:8084"
     depends_on:
       - postgres
       - server
