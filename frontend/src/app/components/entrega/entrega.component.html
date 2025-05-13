@@ -1,0 +1,194 @@
+<div class="surface-card border-round shadow-4 p-1 max-w-lg mx-auto">
+    <p-toast></p-toast>
+    <h1 class="text-4xl text-primary font-bold text-center mb-6">ENTREGA DE INCENTIVOS</h1>
+    <div class="flex justify-center gap-x-4">
+        <div class="border border-primary rounded-xl p-4 bg-primary/10 text-primary text-center font-semibold shadow-sm w-fit">
+            <span>Socios Habilitados:</span>
+            <span class="ml-2 font-bold text-primary">{{ habilitadosCount }}</span>
+        </div>
+
+        <div class="border border-primary rounded-xl p-4 bg-primary/10 text-primary text-center font-semibold shadow-sm w-fit">
+            <span>Total Entregas:</span>
+            <span class="ml-2 font-bold text-primary">{{ entregadosCount }}</span>
+        </div>
+    </div>
+
+    <div class="mb-5 flex flex-column align-items-center p-3 border-1 border-round surface-100 relative">
+        <div class="w-full flex align-items-center gap-3">
+            <label for="buscarSocio" class="text-l text-center text-primary font-bold whitespace-nowrap mt-2">Buscar socio:</label>
+            <input pInputText id="buscarSocio" [(ngModel)]="busquedaSocio" (keyup.enter)="buscarSocios()" placeholder="Buscar por nombre, número o CI" class="w-full align-items-center border-none" />
+            <button pButton icon="pi pi-search" class="p-button-text" [loading]="buscando" (click)="buscarSocios()"></button>
+        </div>
+        <div *ngIf="mostrarResultadosBusqueda && sociosFiltrados.length > 0" class="w-full border-1 shadow-5 bg-gray-900 absolute left-0 z-5 mt-4 rounded-lg overflow-hidden" style="top: calc(100% + 10px); max-height: 250px; overflow-y: auto">
+            <ul class="list-none p-0 m-0">
+                <li *ngFor="let socio of sociosFiltrados" class="p-3 border-bottom-1 border-gray-700 hover:bg-gray-800 cursor-pointer transition-all flex items-center gap-3" (click)="seleccionarSocio(socio)">
+                    <div class="flex flex-col flex-grow">
+                        <span class="font-semibold text-white text-lg">{{ socio.Nombre || 'Sin nombre' }}</span>
+                        <small class="text-gray-400">No. Socio: {{ socio.Nsocio || 'N/D' }} | CI: {{ socio.CI || 'N/D' }}</small>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <span class="text-primary font-bold text-2xl">No. de registro: </span>
+        <span class="font-bold text-3xl">{{ proximoNumeroRegistro }}</span>
+    </div>
+
+    <div
+        class="flex mb-5 gap-4"
+        [ngClass]="{
+            'flex flex-col items-center text-center': !socioSeleccionado?.Nsocio,
+            'flex flex-row items-start': socioSeleccionado?.Nsocio
+        }"
+    >
+        <div>
+            <img *ngIf="socioSeleccionado?.Nsocio" [src]="imagenUrl" alt="Foto de perfil" class="border-circle shadow-3" style="width: 250px; height: 140px; object-fit: cover; margin-top: 60px" (error)="handleImageError($event)" />
+        </div>
+        <div>
+            <div class="text-xl font-bold text-center text-primary mb-4 mt-4">Información del Socio</div>
+
+            <div *ngIf="socioSeleccionado" class="p-4 border-1 surface-0 border-round shadow-2">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="text-primary font-bold">Nombre:</div>
+                    <div>{{ socioSeleccionado.Nombre || 'No disponible' }}</div>
+                    <div class="text-primary font-bold">N° de Socio:</div>
+                    <div>{{ socioSeleccionado.Nsocio || 'No disponible' }}</div>
+                    <div class="text-primary font-bold">CI:</div>
+                    <div>{{ socioSeleccionado.CI || 'No disponible' }}</div>
+                    <div class="text-primary font-bold">Celular:</div>
+                    <div>{{ socioSeleccionado.Celular || 'No disponible' }}</div>
+                    <div class="text-primary font-bold">Correo:</div>
+                    <div>{{ socioSeleccionado.Correo || 'No disponible' }}</div>
+                    <div class="text-primary font-bold">Estado:</div>
+                    <div>
+                        <span *ngIf="verificandoHabilitacion" class="text-blue-500"> <i class="pi pi-spin pi-spinner mr-2"></i>Verificando... </span>
+                        <span *ngIf="!verificandoHabilitacion && socioHabilitado" class="text-green-500 font-bold"> <i class="pi pi-check-circle mr-2"></i>Habilitado </span>
+                        <span *ngIf="!verificandoHabilitacion && !socioHabilitado" class="text-red-500 font-bold"> <i class="pi pi-times-circle mr-2"></i>Inhabilitado </span>
+                    </div>
+                </div>
+                <div class="flex justify-content-center m-5">
+                    <button pButton icon="pi pi-print" label="Imprimir Datos" class="p-button-sm p-button-outlined" (click)="imprimirDatosSocio()"></button>
+                </div>
+            </div>
+            <div *ngIf="!socioSeleccionado" class="p-4 surface-100 border-1 border-round text-center text-gray-500 italic">No se ha seleccionado ningún socio.</div>
+        </div>
+    </div>
+    <div class="mb-4">
+        <div class="text-primary font-bold mb-1">Responsable:</div>
+        <input pInputText [value]="userData?.nombre + ' ' + userData?.apellidoPaterno + ' ' + userData?.apellidoMaterno" class="w-full" readonly />
+    </div>
+    <div class="mb-5">
+        <div class="text-primary font-bold mb-1">Actividad:</div>
+        <p-dropdown
+            *ngIf="actividadesHabilitadas.length > 1"
+            [options]="actividadesHabilitadas"
+            [(ngModel)]="actividadSeleccionada"
+            optionLabel="nombre"
+            (onChange)="onActividadChange($event)"
+            placeholder="Seleccione una actividad"
+            [style]="{ width: '100%' }"
+            appendTo="body"
+        >
+        </p-dropdown>
+        <input *ngIf="actividadesHabilitadas.length <= 1" pInputText [value]="actividadSeleccionada?.nombre" class="w-full mt-2" readonly />
+    </div>
+    <div *ngIf="incentivosDeActividad && incentivosDeActividad.length > 0" class="mb-5">
+        <div class="text-xl text-primary font-bold mb-3 text-center">Incentivos disponibles:</div>
+        <div class="grid gap-4 justify-content-center" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); max-width: 900px; margin: 0 auto">
+            <div
+                *ngFor="let inc of incentivosDeActividad"
+                class="p-3 border-1 border-round text-center cursor-pointer transition-all relative"
+                [ngClass]="{
+                    'border-2 border-primary': inc.id && incentivoSeleccionadoMap[inc.id],
+                    'opacity-50 pointer-events-none': !socioSeleccionado || !socioHabilitado || socioEntregado,
+                    'hover:surface-200': socioSeleccionado && socioHabilitado && !socioEntregado
+                }"
+                (click)="socioSeleccionado && socioHabilitado && !socioEntregado && toggleSeleccion(inc, $event); socioSeleccionado && socioHabilitado && !socioEntregado && mostrarVistaPrevia(inc)"
+            >
+                <div class="absolute top-2 right-2">
+                    <input
+                        type="checkbox"
+                        [checked]="inc.id && incentivoSeleccionadoMap[inc.id]"
+                        [disabled]="!socioSeleccionado || !socioHabilitado || socioEntregado"
+                        (click)="socioSeleccionado && socioHabilitado && !socioEntregado && toggleSeleccion(inc, $event)"
+                    />
+                </div>
+                <img *ngIf="inc.imagenBase64" [src]="inc.imagenBase64" [alt]="inc.nombre" class="w-8 h-8 mb-2 border-round shadow-1 mx-auto" />
+                <div class="font-medium">{{ inc.nombre }}</div>
+                <div class="text-xs mt-1">Cantidad: {{ inc.cantidad }}</div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!incentivosDeActividad || incentivosDeActividad.length === 0" class="mb-5 text-center">
+        <p-message severity="info" text="No hay incentivos disponibles para esta actividad"></p-message>
+    </div>
+
+    <p-dialog header="Vista previa del incentivo" [(visible)]="vistaPreviaVisible" [modal]="true" [style]="{ width: '400px' }" [dismissableMask]="true">
+        <div class="text-center">
+            <img *ngIf="incentivoSeleccionado?.imagenBase64" [src]="incentivoSeleccionado?.imagenBase64" [alt]="incentivoSeleccionado?.nombre" class="w-full border-round shadow-2 mb-3" />
+            <h4>{{ incentivoSeleccionado?.nombre }}</h4>
+            <small>Cantidad: {{ incentivoSeleccionado?.cantidad }}</small>
+        </div>
+    </p-dialog>
+
+    <p-dialog [(visible)]="comprobanteVisible" header="Comprobante de Entrega" [modal]="true" [style]="{ maxWidth: '700px' }">
+        <div id="comprobante-content" style="padding: 20px; font-family: Arial">
+            <div class="flex align-items-center mb-3">
+                <img src="assets/image/sanmartin.png" style="width: 20%; max-width: 100px; max-height: 100px" />
+                <div class="align-items-center justify-content-center h-full" style="align-items: center; justify-content: center; height: 100%">
+                    <div class="text-center">
+                        <h3 style="margin: 0">COOPERATIVA DE AHORRO Y CREDITO SOCIETARIA</h3>
+                        <h3 style="margin: 0">"SAN MARTIN" R.L.</h3>
+                        <h4 style="margin: 0">{{ actividadSeleccionada?.nombre }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="text-4xl text-primary font-bold" style="text-align: right; font-weight: bold">N° {{ numeroRegistro }}</div>
+
+            <div class="flex flex-column md:flex-row mb-5">
+                <div style="width: 100%" class="md:w-7">
+                    <p><strong>N° Socio(a):</strong> {{ socioSeleccionadoComprobante?.Nsocio }}</p>
+                    <p><strong>C.I:</strong> {{ socioSeleccionadoComprobante?.CI }}</p>
+                    <p><strong>Socio(a):</strong> {{ socioSeleccionadoComprobante?.Nombre }}</p>
+                    <p><strong>Celular:</strong> {{ socioSeleccionadoComprobante?.Celular }}</p>
+                    <p><strong>Correo:</strong> {{ socioSeleccionadoComprobante?.Correo }}</p>
+                    <p><strong>Entrega:</strong> (1) {{ incentivoParaComprobante?.nombre }}</p>
+                </div>
+                <div style="margin-left: auto; text-align: right; margin-top: auto">
+                    <hr style="width: 200px" />
+                    <span style="padding: 0 30px; font-weight: bold">Recibí Conforme</span>
+                </div>
+            </div>
+            <hr />
+            <div>
+                <p><strong>Responsable:</strong> {{ ultimoRegistro?.responsibleName || userData?.nombre + ' ' + userData?.apellidoPaterno + ' ' + userData?.apellidoMaterno }}</p>
+                <p><strong>Fecha de entrega:</strong> {{ fechaActual }}</p>
+                <p><strong>Hora de entrega:</strong> {{ horaActual }}</p>
+            </div>
+        </div>
+        <div class="flex justify-content-center mt-3 gap-3">
+            <button pButton label="Cerrar" icon="pi pi-times" class="p-button-secondary" (click)="comprobanteVisible = false"></button>
+            <button pButton label="Imprimir" icon="pi pi-print" class="p-button-primary" (click)="imprimirComprobante()"></button>
+        </div>
+    </p-dialog>
+
+    <button
+        pButton
+        label="Registrar Entrega"
+        icon="pi pi-check"
+        class="w-full p-button-primary mt-4"
+        style="height: 3rem"
+        [disabled]="!socioSeleccionado || !actividadSeleccionada || Object.keys(incentivoSeleccionadoMap).length === 0 || socioYaRegistrado || !socioHabilitado || socioEntregado"
+        [loading]="registrandoEntrega"
+        (click)="registrarEntrega()">
+    </button>
+    <button 
+        pButton label="Imprimir Comprobante" 
+        icon="pi pi-print" 
+        class="mt-2 w-full" 
+        [disabled]="!socioSeleccionado || !actividadSeleccionada || !socioYaRegistrado" 
+        (click)="cargarDatosDesdeBD()">
+    </button>
+</div>

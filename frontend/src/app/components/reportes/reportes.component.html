@@ -1,0 +1,144 @@
+<div *ngIf="!isAuthorized" class="flex justify-center items-start mt-8">
+    <div class="surface-card border-round shadow-3 p-6 text-center w-full max-w-md">
+        <div class="mb-4">
+            <i class="pi pi-lock text-6xl text-primary-500" style="font-size: 4em"></i>
+        </div>
+        <h3 class="text-4xl font-bold text-primary-700 mb-3" style="font-weight: 900">Acceso restringido</h3>
+
+        <p class="text-sm text-color-secondary mb-4">No cuentas con los permisos necesarios para acceder a esta sección del sistema.</p>
+    </div>
+</div>
+
+<div *ngIf="isAuthorized">
+    <p-card styleClass="mb-4">
+        <h2 class="text-center">Reporte de Entrega de Incentivos</h2>
+        <form [formGroup]="filterForm" class="p-fluid">
+            <div class="p-formgrid p-grid">
+                <div class="p-field p-col-12 p-md-6 p-lg-3 pb-5">
+                    <label for="actividad">Actividad:</label>
+                    <p-select formControlName="actividad" [options]="actividades" optionLabel="nombre" optionValue="id" placeholder="Todas las actividades" class="mt-3 w-full"> </p-select>
+                </div>
+                <div class="p-field p-col-12 p-md-6 p-lg-3 pb-5">
+                    <label for="responsable">Responsable:</label>
+                    <p-select formControlName="responsable" [options]="responsables" optionLabel="nombre" optionValue="id" placeholder="Todos los responsables" class="mt-3 w-full"> </p-select>
+                </div>
+                <div class="flex">
+                    <div class="p-field p-col-12 p-md-6 p-lg-3 pb-5 mr-10">
+                        <label for="fechaInicio">Fecha inicio: </label>
+                        <p-datepicker formControlName="fechaInicio" [showIcon]="true" dateFormat="dd/mm/yy" [baseZIndex]="1000" [appendTo]="'body'" [monthNavigator]="true" [yearNavigator]="true" [yearRange]="'2000:2050'" class="mt-3"> </p-datepicker>
+                    </div>
+                    <div class="p-field p-col-12 p-md-6 p-lg-3 pb-5">
+                        <label for="fechaFin">Fecha fin: </label>
+                        <p-datepicker formControlName="fechaFin" [showIcon]="true" dateFormat="dd/mm/yy" [baseZIndex]="1000" [appendTo]="'body'" [monthNavigator]="true" [yearNavigator]="true" [yearRange]="'2000:2050'" class="mt-3"> </p-datepicker>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3 p-d-flex p-jc-center p-ai-center" style="width: 100%; display: flex; justify-content: center; align-items: center">
+                <button pButton icon="pi pi-filter" label="Aplicar Filtros" class="p-button-primary mr-2" (click)="filtrarRegistros()"></button>
+                <button pButton icon="pi pi-filter-slash" label="Limpiar Filtros" class="p-button-secondary mr-2" (click)="limpiarFiltros()"></button>
+            </div>
+        </form>
+    </p-card>
+    <p-card>
+        <div class="card">
+            <div class="mb-3 p-d-flex p-jc-center p-ai-center" style="width: 100%; display: flex; justify-content: right; align-items: right">
+                <button pButton label="Exportar Excel" class="p-button-primary" (click)="exportarExcel()"></button>
+            </div>
+            <div class="flex text-center mb-4">
+                <img src="assets/image/sanmartin.png" alt="Logo Cooperativa" style="width: 65px" class="p-mb-2" />
+                <div>
+                    <h5 class="text-center" style="margin: 0px">Cooperativa de Ahorro y Crédito Societaria</h5>
+                    <h6 class="text-center" style="margin: 0px">"SAN MARTÍN" R. L.</h6>
+                </div>
+            </div>
+            <div>
+                <p *ngIf="actividadSeleccionada"><strong>Actividad:</strong> {{ actividadSeleccionada }}</p>
+                <p *ngIf="responsableSeleccionado"><strong>Responsable:</strong> {{ responsableSeleccionado }}</p>
+            </div>
+
+            <div class="flex flex-wrap gap-4 mt-2">
+                <div class="surface-card shadow-2 p-3 border-round flex align-items-center">
+                    <span class="pi pi-users text-xl text-primary-500 mr-2"></span>
+                    <div>
+                        <div class="text-500 font-medium">Total Habilitados</div>
+                        <div class="text-900 font-bold text-xl">{{ habilitadosCount || 0 }}</div>
+                    </div>
+                </div>
+                <div class="surface-card shadow-2 p-3 border-round flex align-items-center">
+                    <span class="pi pi-check-circle text-xl text-green-500 mr-2"></span>
+                    <div>
+                        <div class="text-500 font-medium">Entregados</div>
+                        <div class="text-900 font-bold text-xl">{{ filteredRegistros.length }}</div>
+                    </div>
+                </div>
+                <div class="surface-card shadow-2 p-3 border-round flex align-items-center">
+                    <span class="pi pi-exclamation-circle text-xl text-orange-500 mr-2"></span>
+                    <div>
+                        <div class="text-500 font-medium">Faltantes</div>
+                        <div class="text-900 font-bold text-xl">{{ faltantesCount }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <p-table
+                [value]="filteredRegistros"
+                [paginator]="true"
+                [rows]="10"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+                responsiveLayout="scroll"
+                styleClass="p-datatable-sm p-datatable-striped"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 10%" class="text-center">N° Registro</th>
+                        <th style="width: 15%" class="text-center">N° Socio</th>
+                        <th style="width: 40%">Socio (a)</th>
+                        <th style="width: 10%" class="text-center">C.I.</th>
+                        <th style="width: 10%" class="text-center">Celular</th>
+                        <th style="width: 20%" class="text-center">Correo</th>
+                        <th style="width: 15%" class="text-center">Entrega</th>
+                        <th style="width: 15%" class="text-center">Actividad</th>
+                        <th style="width: 15%" class="text-center">Fecha entrega</th>
+                        <th style="width: 15%" class="text-center">hora entrega</th>
+                        <th style="width: 15%" class="text-center">Responsable</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-registro>
+                    <tr>
+                        <td class="text-center">{{ registro.registrationNumber }}</td>
+                        <td class="text-center">{{ registro.memberNumber }}</td>
+                        <td>{{ registro.memberName }}</td>
+                        <td class="text-center">{{ registro.memberCI }}</td>
+                        <td class="text-center">{{ registro.phoneNumber }}</td>
+                        <td class="text-center">{{ registro.email }}</td>
+                        <td class="text-center">{{ registro.incentiveName }}</td>
+                        <td class="text-center">{{ registro.activityName }}</td>
+                        <td class="text-center">{{ registro.deliveryDate | date: 'dd/MM/yyyy' }}</td>
+                        <td class="text-center">{{ registro.deliveryTime ? registro.deliveryTime.split('.')[0] : '' }}</td>
+                        <td class="text-center">{{ registro.responsibleName }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="9" class="text-center p-4">No hay registros que coincidan con los filtros seleccionados</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <p-dialog header="Guardar reporte" [(visible)]="displaySaveDialog" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false">
+                <div class="flex flex-column gap-3">
+                    <div class="flex flex-column gap-2">
+                        <label for="fileName">Introduce el nombre del archivo:</label>
+                    </div>
+                </div>
+                <div class="p-input-icon-right">
+                    <input id="fileName" type="text" pInputText [(ngModel)]="fileName" style="width: 100%" placeholder="Ingrese el nombre del archivo" />
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="displaySaveDialog = false"></button>
+                    <button pButton label="Descargar" icon="pi pi-download" class="p-button-primary" (click)="confirmExport()"></button>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </p-card>
+</div>

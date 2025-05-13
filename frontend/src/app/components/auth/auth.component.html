@@ -1,0 +1,24 @@
+<app-floating-configurator />
+<div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
+    <div class="flex flex-col items-center justify-center">
+        <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
+            <div class="w-full bg-surface-0 dark:bg-surface-900 py-5 px-8 sm:px-20" style="border-radius: 53px">
+                <div class="text-center mb-8">
+                    <img src="assets/image/sanmartin.png" alt="Logo" class="mb-3 w-16 shrink-0 mx-auto" style="width: 135px" />
+
+                    <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">“SAN MARTÍN” R. L.</div>
+                    <span class="text-muted-color font-medium">Introduzca sus Credenciales</span>
+                </div>
+
+                <div style="padding-bottom: 6px">
+                    <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Usuario</label>
+                    <input pInputText id="email1" type="text" placeholder="Introdusca su Usuario" class="w-full md:w-[30rem] mb-8" [(ngModel)]="username" />
+                    <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Contraseña</label>
+                    <p-password id="password1" [(ngModel)]="password" placeholder="introdusca su contraseña" [toggleMask]="true" styleClass="mb-4" [fluid]="true" [feedback]="false"></p-password>
+                    <p-button label="Ingresar" styleClass="w-full" (click)="onSubmit()" [style]="{ 'margin-top': '8px' }"></p-button>
+                    <div *ngIf="errorMessage" class="text-red-500 mt-4">{{ errorMessage }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

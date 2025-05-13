@@ -1,0 +1,90 @@
+:host ::ng-deep {
+
+    .p-calendar {
+        width: 100%;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .p-datatable {
+        .p-datatable-thead > tr > th {
+            background-color: var(--surface-section);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .p-datatable-tbody > tr:nth-child(even) {
+            background-color: var(--surface-ground);
+        }
+    }
+
+    h2,
+    h5 {
+        color: var(--text-color);
+    }
+
+    .uppercase {
+        text-transform: uppercase;
+    }
+
+    .incentive-icon {
+        margin-right: 0.5rem;
+    }
+}
+
+@media print {
+    #seccion-filtros {
+        display: none !important;
+    }
+
+    body {
+        font-family: var(--font-family);
+        font-size: 12pt;
+    }
+
+    .print-section {
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .p-datatable {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+            border: 1px solid #000;
+        }
+
+        thead tr {
+            background-color: #f2f2f2 !important;
+            color: #000 !important;
+        }
+
+        thead th {
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    }
+
+    .p-paginator {
+        display: none !important;
+    }
+
+    h2 {
+        font-size: 16pt;
+    }
+
+    h5 {
+        font-size: 14pt;
+    }
+    
+    .p-datatable-tbody > tr {
+        display: table-row !important;
+    }
+}

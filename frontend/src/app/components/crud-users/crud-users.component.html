@@ -1,0 +1,185 @@
+<div *ngIf="!isAuthorized" class="flex justify-center items-start mt-8">
+    <div class="surface-card border-round shadow-3 p-6 text-center w-full max-w-md">
+        <div class="mb-4">
+            <i class="pi pi-lock text-6xl text-primary-500" style="font-size: 4em"></i>
+        </div>
+        <h2 class="text-4xl font-bold text-primary-700 mb-3" style="font-weight: 900">Acceso restringido</h2>
+        <p class="text-sm text-color-secondary mb-4">No cuentas con los permisos necesarios para acceder a esta sección del sistema.</p>
+    </div>
+</div>
+
+<div *ngIf="isAuthorized">
+    <p-toast></p-toast>
+    <p-toolbar styleClass="mb-6">
+        <ng-template #start>
+            <p-button label="Registrar" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+            <p-button severity="secondary" label="Eliminar" icon="pi pi-trash" outlined (onClick)="deleteSelectedUsers()" [disabled]="!selectedUsers || !selectedUsers.length" />
+        </ng-template>
+    </p-toolbar>
+
+    <p-table
+        #dt
+        [value]="users()"
+        [rows]="10"
+        [columns]="cols"
+        [paginator]="true"
+        [globalFilterFields]="['id', 'nombre', 'appat', 'apmat', 'email', 'fechcrea', 'fechmod', 'user', 'password', 'estado', 'rol']"
+        [tableStyle]="{ 'min-width': '75rem' }"
+        [(selection)]="selectedUsers"
+        [rowHover]="true"
+        dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+        [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="[10, 20, 30]">
+        <ng-template #caption>
+            <div class="flex items-center justify-between">
+                <h5 class="m-0">Usuarios Registrados</h5>
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Buscar por nombre..." />
+                </p-iconfield>
+            </div>
+        </ng-template>
+
+        <ng-template #header>
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox />
+                </th>
+                <th style="min-width: 16rem">ID</th>
+                <th pSortableColumn="nombre" style="min-width: 16rem">
+                    NOMBRE
+                    <p-sortIcon field="nombre" />
+                </th>
+                <th pSortableColumn="appat" style="min-width: 8rem">APELLIDO PATERNO</th>
+                <th pSortableColumn="apmat" style="min-width: 10rem">APELLIDO MATERNO</th>
+                <th pSortableColumn="email" style="min-width: 12rem">CORREO</th>
+                <th pSortableColumn="fechcrea" style="min-width: 10rem">FECHA DE CREACION</th>
+                <th pSortableColumn="fechmod" style="min-width: 10rem">FECHA DE MODIFICACION</th>
+                <th pSortableColumn="user" style="min-width: 10rem">USUARIO</th>
+                <th pSortableColumn="password" style="min-width: 10rem">CONTRASEÑA</th>
+                <th pSortableColumn="estado" style="min-width: 10rem">ESTADO</th>
+                <th pSortableColumn="rol" style="min-width: 12rem">ROLES</th>
+                <th style="min-width: 12rem"></th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-user>
+            <tr>
+                <td style="width: 3rem">
+                    <p-tableCheckbox [value]="user" />
+                </td>
+                <td style="min-width: 12rem">{{ user.id }}</td>
+                <td style="min-width: 16rem">{{ user.nombre }}</td>
+                <td style="min-width: 16rem">{{ user.apellidoPaterno }}</td>
+                <td style="min-width: 16rem">{{ user.apellidoMaterno }}</td>
+                <td style="min-width: 16rem">{{ user.email }}</td>
+                <td>{{ user.fechaCreacion }}</td>
+                <td>{{ user.fechaModificacion }}</td>
+                <td style="min-width: 16rem">{{ user.username }}</td>
+                <td style="min-width: 16rem">{{ user.password }}</td>
+                <td>
+                    <p-button
+                        (click)="toggleEstado(user)"
+                        [icon]="user.estado ? 'pi pi-check-circle' : 'pi pi-times-circle'"
+                        [label]="user.estado ? 'Activo' : 'Inactivo'"
+                        [styleClass]="user.estado ? 'p-button-success p-button-text p-button-rounded p-button-sm shadow-sm' : 'p-button-danger p-button-text p-button-rounded p-button-sm shadow-sm'">
+                    </p-button>
+                </td>
+                <td style="min-width: 16rem">
+                    <ng-container *ngFor="let userRole of user.userRoles; let i = index"> {{ userRole?.role?.name }}{{ i < user.userRoles.length - 1 ? ', ' : '' }} </ng-container>
+                </td>
+                <td>
+                    <p-button icon="pi pi-user-edit" class="mr-2" [rounded]="true" [outlined]="true" (click)="editUser(user)" />
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteUser(user)" />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <p-dialog [(visible)]="userDialog" [style]="{ width: '450px' }" [header]="tituloDialog" [modal]="true">
+        <div class="flex flex-col gap-6">
+            <div>
+                <label for="nombre" class="block font-bold mb-3">Nombre</label>
+                <input type="text" pInputText id="nombre" [(ngModel)]="user.nombre" autofocus class="w-full" placeholder="Introduzca su Nombre" />
+                <small class="text-red-500" *ngIf="submitted && !user.nombre">El nombre es requerido.</small>
+            </div>
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-6">
+                    <label for="apPaterno" class="block font-bold mb-3">Apellido Paterno</label>
+                    <input type="text" pInputText id="apPaterno" [(ngModel)]="user.apellidoPaterno" class="w-full" placeholder="Apellido Paterno" />
+                </div>
+                <div class="col-span-6">
+                    <label for="apMaterno" class="block font-bold mb-3">Apellido Materno</label>
+                    <input type="text" pInputText id="apMaterno" [(ngModel)]="user.apellidoMaterno" class="w-full" placeholder="Apellido Materno" />
+                </div>
+            </div>
+            <div>
+                <label for="correo" class="block font-bold mb-3">Correo</label>
+                <input type="email" pInputText id="correo" [(ngModel)]="user.email" class="w-full" placeholder="Introduzca su Correo Electronico" />
+                <small class="text-red-500" *ngIf="submitted && !user.email">El correo es requerido.</small>
+            </div>
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-6">
+                    <label for="usuario" class="block font-bold mb-3">Usuario</label>
+                    <input type="text" pInputText id="usuario" [(ngModel)]="user.username" class="w-full" placeholder="Usuario" />
+                    <small class="text-red-500" *ngIf="submitted && !user.username">El usuario es requerido.</small>
+                </div>
+                <div *ngIf="!user.id" class="col-span-6">
+                    <label for="password" class="block font-bold mb-3">Password</label>
+                    <div class="relative">
+                        <input [type]="showPassword ? 'text' : 'password'" pInputText id="password" [(ngModel)]="user.password" required class="w-full pr-10" placeholder="Contraseña" />
+                        <button type="button" (click)="showPassword = !showPassword" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 focus:outline-none">
+                            <i [ngClass]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+                        </button>
+                    </div>
+                    <small class="text-red-500" *ngIf="submitted && !user.password">La contraseña es requerida.</small>
+                </div>
+                <div *ngIf="user.id" class="col-span-6">
+                    <label for="password" class="block font-bold mb-3">Contraseña</label>
+                    <div class="relative">
+                        <input [type]="showPassword ? 'text' : 'password'" pInputText id="password" [(ngModel)]="newPassword" class="w-full pr-10" placeholder="Nueva Contraseña" />
+                        <button type="button" (click)="showPassword = !showPassword" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 focus:outline-none">
+                            <i [ngClass]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+                        </button>
+                    </div>
+                    <p-message severity="info" text="Este campo es solo para actualizar la contraseña. Déjalo vacío si no deseas modificarla."> </p-message>
+                </div>
+            </div>
+            <div *ngIf="!user.id">
+                <span class="block font-bold mb-4">Rol</span>
+                <div class="grid grid-cols-12 gap-4">
+                    <div class="flex items-center gap-2 col-span-6">
+                        <p-radioButton id="rolDesc1" name="rolDesc" value="ADMIN" [(ngModel)]="selectedRole"></p-radioButton>
+                        <label for="rolDesc1">ADMIN</label>
+                    </div>
+                    <div class="flex items-center gap-2 col-span-6">
+                        <p-radioButton id="rolDesc2" name="rolDesc" value="USER" [(ngModel)]="selectedRole"></p-radioButton>
+                        <label for="rolDesc2">USER</label>
+                    </div>
+                </div>
+                <small class="text-red-500" *ngIf="submitted && !selectedRole">El rol es requerido.</small>
+            </div>
+            <div *ngIf="user.id">
+                <span class="block font-bold mb-4">Rol</span>
+                <div class="grid grid-cols-12 gap-4">
+                    <div class="flex items-center gap-2 col-span-6">
+                        <p-checkbox id="rolDesc1" name="roles" value="ADMIN" [(ngModel)]="selectedRoles"></p-checkbox>
+                        <label for="rolDesc1">ADMIN</label>
+                    </div>
+                    <div class="flex items-center gap-2 col-span-6">
+                        <p-checkbox id="rolDesc2" name="roles" value="USER" [(ngModel)]="selectedRoles"></p-checkbox>
+                        <label for="rolDesc2">USER</label>
+                    </div>
+                </div>
+                <small class="text-red-500" *ngIf="submitted && selectedRoles.length === 0">Debe seleccionar al menos un rol.</small>
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <p-button label="Cancelar" icon="pi pi-times" styleClass="p-button-text" (click)="hideDialog()"></p-button>
+            <p-button *ngIf="user.id" label="Actualizar" icon="pi pi-check" (click)="updateUser()"></p-button>
+            <p-button *ngIf="!user.id" label="Guardar" icon="pi pi-check" (click)="saveUser()"></p-button>
+        </ng-template>
+    </p-dialog>
+    <p-confirmdialog [style]="{ width: '450px' }" />
+</div>
