@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   postgres:
+    container_name: postgres
     build: 
       context: ./docker/postgres
     volumes:
@@ -16,6 +17,7 @@ services:
       - backend
 
   server:
+    container_name: server
     build: 
       context: .
       dockerfile: server/Dockerfile
@@ -28,6 +30,7 @@ services:
       - backend
 
   actividades:
+    container_name: actividades
     build: 
       context: .
       dockerfile: actividades/Dockerfile
@@ -45,6 +48,7 @@ services:
       - backend
 
   login:
+    container_name: login
     build: 
       context: .
       dockerfile: login/Dockerfile
@@ -62,6 +66,7 @@ services:
       - backend
   
   registros:
+    container_name: registros
     build: 
       context: .
       dockerfile: registros/Dockerfile
@@ -79,6 +84,7 @@ services:
       - backend
   
   socios:
+    container_name: socios
     build: 
       context: .
       dockerfile: socios/Dockerfile
@@ -96,6 +102,7 @@ services:
       - backend
 
   sociosexcel:
+    container_name: sociosexcel
     build: 
       context: .
       dockerfile: sociosexcel/Dockerfile
@@ -113,6 +120,7 @@ services:
       - backend
   
   gateway:
+    container_name: gateway
     build: 
       context: .
       dockerfile: gateway/Dockerfile
@@ -128,6 +136,7 @@ services:
 
   # Frontend
   frontend:
+    container_name: frontend
     build: 
       context: ./frontend
     ports:
