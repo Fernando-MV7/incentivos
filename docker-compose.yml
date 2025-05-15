@@ -145,6 +145,7 @@ services:
       - gateway
     networks:
       - frontend
+      - backend
 
 networks:
   backend:
