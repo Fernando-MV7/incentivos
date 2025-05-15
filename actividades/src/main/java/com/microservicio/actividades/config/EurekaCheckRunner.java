@@ -7,7 +7,7 @@ import org.springframework.web.client.RestTemplate;
 public class EurekaCheckRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
-        String eurekaServerUrl = "http://./server:8761/eureka/apps";
+        String eurekaServerUrl = "http://server:8761/eureka/apps";
         RestTemplate restTemplate = new RestTemplate();
         boolean eurekaUp = false;
 
