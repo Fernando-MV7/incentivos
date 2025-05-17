@@ -124,17 +124,14 @@ services:
     depends_on:
       - gateway
     networks:
-      - frontend
       - backend
     environment:
       - NODE_ENV=production
-    extra_hosts:
-      - "gateway:172.19.0.4"
+
 networks:
   backend:
     driver: bridge
-  frontend:
-    driver: bridge
+
 
 volumes:
   postgres-data:
