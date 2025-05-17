@@ -23,7 +23,7 @@ export interface Incentivo {
 })
 export class IncentivoService {
 
-  private apiUrl = 'http://gateway:8080';
+  private apiUrl = 'http://localhost:8080';
   constructor(private http: HttpClient) { }
 
   getIncentivos(): Observable<Incentivo[]> {

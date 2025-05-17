@@ -31,7 +31,7 @@ interface UserInfoResponse {
 })
 export class UserService {
 
-  private apiUrl = 'http://gateway:8080';
+  private apiUrl = 'http://localhost:8080';
   constructor(private http: HttpClient) { }
 
   getUsers(): Observable<User[]> {

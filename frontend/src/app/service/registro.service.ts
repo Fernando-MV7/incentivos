@@ -34,7 +34,7 @@ export interface ActivityStats {
   providedIn: 'root'
 })
 export class RegistroService {
-  private apiUrl = 'http://gateway:8080';
+  private apiUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) { }
 

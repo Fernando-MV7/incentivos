@@ -23,7 +23,7 @@ export interface ResponseDTO {
   providedIn: 'root'
 })
 export class ExcelService {
-  private apiUrl = 'http://gateway:8080/api/socios';
+  private apiUrl = 'http://localhost:8080/api/socios';
 
   constructor(private http: HttpClient) { }
 
