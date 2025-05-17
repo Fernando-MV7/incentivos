@@ -47,7 +47,7 @@ services:
       - SPRING_PROFILE=produccion
     networks:
       - backend
-  
+
   registros:
     container_name: registros
     build: 
@@ -64,7 +64,7 @@ services:
       - SPRING_PROFILE=produccion
     networks:
       - backend
-  
+
   socios:
     container_name: socios
     build: 
@@ -98,7 +98,7 @@ services:
       - SPRING_PROFILE=produccion
     networks:
       - backend
-  
+
   gateway:
     container_name: gateway
     build: 
@@ -133,7 +133,6 @@ services:
 networks:
   backend:
     driver: bridge
-
 
 volumes:
   postgres-data:
