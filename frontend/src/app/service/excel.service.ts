@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 export interface Socio {
   id?: number;
@@ -23,7 +24,7 @@ export interface ResponseDTO {
   providedIn: 'root'
 })
 export class ExcelService {
-  private apiUrl = 'http://gateway:8080/api/socios';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -36,11 +37,11 @@ export class ExcelService {
       .set('numeroSocio', numeroSocio)
       .set('idActividad', idActividad.toString());
       
-    return this.http.get<ResponseDTO>(`${this.apiUrl}/verificar-existencia`, { params });
+    return this.http.get<ResponseDTO>(`${this.apiUrl}/api/socios/verificar-existencia`, { params });
   }
 
   getSocios(): Observable<Socio[]> {
-    return this.http.get<Socio[]>(`${this.apiUrl}`).pipe(
+    return this.http.get<Socio[]>(`${this.apiUrl}/api/socios`).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -48,7 +49,7 @@ export class ExcelService {
   }
 
   getSocioPorNumero(numeroSocio: string): Observable<ResponseDTO> {
-    return this.http.get<ResponseDTO>(`${this.apiUrl}/${numeroSocio}`).pipe(
+    return this.http.get<ResponseDTO>(`${this.apiUrl}/api/socios/${numeroSocio}`).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -60,7 +61,7 @@ export class ExcelService {
     formData.append('file', file);
     formData.append('idActividad', idActividad.toString());
       
-    return this.http.post<ResponseDTO>(`${this.apiUrl}/upload`, formData).pipe(
+    return this.http.post<ResponseDTO>(`${this.apiUrl}/api/socios/upload`, formData).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -68,7 +69,7 @@ export class ExcelService {
   }
 
   crearSocio(socio: Socio): Observable<ResponseDTO> {
-    return this.http.post<ResponseDTO>(`${this.apiUrl}/nuevo`, socio).pipe(
+    return this.http.post<ResponseDTO>(`${this.apiUrl}/api/socios/nuevo`, socio).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -81,7 +82,7 @@ export class ExcelService {
       params = params.set('idActividad', idActividad.toString());
     }
     
-    return this.http.patch<ResponseDTO>(`${this.apiUrl}/${numeroSocio}/habilitar`, {}, { params }).pipe(
+    return this.http.patch<ResponseDTO>(`${this.apiUrl}/api/socios/${numeroSocio}/habilitar`, {}, { params }).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -94,7 +95,7 @@ export class ExcelService {
       params = params.set('idActividad', idActividad.toString());
     }
     
-    return this.http.patch<ResponseDTO>(`${this.apiUrl}/${numeroSocio}/inhabilitar`, {}, { params }).pipe(
+    return this.http.patch<ResponseDTO>(`${this.apiUrl}/api/socios/${numeroSocio}/inhabilitar`, {}, { params }).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -105,7 +106,7 @@ export class ExcelService {
     const params = new HttpParams()
       .set('idActividad', idActividad.toString());
     
-    return this.http.patch<ResponseDTO>(`${this.apiUrl}/${numeroSocio}/entregar`, {}, { params }).pipe(
+    return this.http.patch<ResponseDTO>(`${this.apiUrl}/api/socios/${numeroSocio}/entregar`, {}, { params }).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -118,7 +119,7 @@ export class ExcelService {
       params = params.set('idActividad', idActividad.toString());
     }
     
-    return this.http.delete<ResponseDTO>(`${this.apiUrl}/${numeroSocio}`, { params }).pipe(
+    return this.http.delete<ResponseDTO>(`${this.apiUrl}/api/socios/${numeroSocio}`, { params }).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -126,7 +127,7 @@ export class ExcelService {
   }
 
   eliminarMultiplesSocios(numerosSocios: string[]): Observable<ResponseDTO> {
-    return this.http.delete<ResponseDTO>(`${this.apiUrl}/eliminar-multiples`, { body: numerosSocios }).pipe(
+    return this.http.delete<ResponseDTO>(`${this.apiUrl}/api/socios/eliminar-multiples`, { body: numerosSocios }).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -134,7 +135,7 @@ export class ExcelService {
   }
 
   getSociosPorActividad(idActividad: number): Observable<ResponseDTO> {
-    return this.http.get<ResponseDTO>(`${this.apiUrl}/actividad/${idActividad}`).pipe(
+    return this.http.get<ResponseDTO>(`${this.apiUrl}/api/socios/actividad/${idActividad}`).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -146,7 +147,7 @@ export class ExcelService {
       .set('numeroSocio', numeroSocio)
       .set('idActividad', idActividad.toString());
       
-    return this.http.get<ResponseDTO>(`${this.apiUrl}/buscar`, { params }).pipe(
+    return this.http.get<ResponseDTO>(`${this.apiUrl}/api/socios/buscar`, { params }).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -154,7 +155,7 @@ export class ExcelService {
   }
 
   getActividades(): Observable<ResponseDTO> {
-    return this.http.get<ResponseDTO>(`${this.apiUrl}/actividades`).pipe(
+    return this.http.get<ResponseDTO>(`${this.apiUrl}/api/socios/actividades`).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -162,7 +163,7 @@ export class ExcelService {
   }
 
   contarSociosPorActividad(idActividad: number | string): Observable<ResponseDTO> {
-    return this.http.get<ResponseDTO>(`${this.apiUrl}/contar/actividad/${idActividad}`).pipe(
+    return this.http.get<ResponseDTO>(`${this.apiUrl}/api/socios/contar/actividad/${idActividad}`).pipe(
       catchError(error => {
         return throwError(() => error);
       })
@@ -170,7 +171,7 @@ export class ExcelService {
   }
 
   contarSociosPorTodasLasActividades(): Observable<ResponseDTO> {
-    return this.http.get<ResponseDTO>(`${this.apiUrl}/contar/todas-actividades`).pipe(
+    return this.http.get<ResponseDTO>(`${this.apiUrl}/api/socios/contar/todas-actividades`).pipe(
       catchError(error => {
         return throwError(() => error);
       })

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 export interface Actividad {
   id?: string | number;
@@ -40,7 +41,7 @@ export interface User {
 })
 export class ActividadService {
 
-  private apiUrl = 'http://gateway:8080'
+  private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
   
   getActividades(): Observable<Actividad[]> {

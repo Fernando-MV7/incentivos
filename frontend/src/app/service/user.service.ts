@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 interface InventoryStatus {
   label: string;
@@ -31,7 +32,7 @@ interface UserInfoResponse {
 })
 export class UserService {
 
-  private apiUrl = 'http://gateway:8080';
+  private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
   getUsers(): Observable<User[]> {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators'; 
+import { environment } from 'src/environments/environment';
 
 export interface ApiSocio {
     gbagenomb?: string;
@@ -29,10 +30,10 @@ export interface Socios {
   providedIn: 'root'
 })
 export class SociosService {
-    private url = 'http://gateway:8080';
+    private apiUrl = environment.apiUrl;
     constructor(private http: HttpClient) { }
     getSocios(): Observable<Socios[]> {
-        return this.http.get<ApiSocio[]>(`${this.url}/api/agents`)
+        return this.http.get<ApiSocio[]>(`${this.apiUrl}/api/agents`)
             .pipe(
                 map((socios: ApiSocio[]) => socios.map((socio: ApiSocio) => ({
                     Nombre: socio.gbagenomb,
@@ -47,7 +48,7 @@ export class SociosService {
     }
 
     buscarSocioCIvencido(numeroSocio: number): Observable<Socios> {
-        return this.http.get<any>(`${this.url}/api/agents/socio/${numeroSocio}`)
+        return this.http.get<any>(`${this.apiUrl}/api/agents/socio/${numeroSocio}`)
             .pipe(
                 map(response => {
                     return this.mapearSocio(response);
@@ -56,7 +57,7 @@ export class SociosService {
     }
 
     buscarSocio(texto: string): Observable<Socios[]> {    
-        const url = `${this.url}/api/agents/${encodeURIComponent(texto)}`;
+        const url = `${this.apiUrl}/api/agents/${encodeURIComponent(texto)}`;
         
         return this.http.get<any>(url).pipe(
             map(response => {
@@ -138,7 +139,7 @@ export class SociosService {
     }
 
     getImagenSocio(socioId: number): Observable<string> {
-        return this.http.get(`${this.url}/api/agents/image/${socioId}`, { 
+        return this.http.get(`${this.apiUrl}/api/agents/image/${socioId}`, { 
             responseType: 'blob' 
         }).pipe(
             map(blob => {
@@ -148,6 +149,6 @@ export class SociosService {
     }
 
     getHabilitadosCount(): Observable<number> {
-        return this.http.get<number>(`${this.url}/api/agents/habilitados/count`);
+        return this.http.get<number>(`${this.apiUrl}/api/agents/habilitados/count`);
     }
 }

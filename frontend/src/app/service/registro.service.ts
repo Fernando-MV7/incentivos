@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 export interface Registro {
   id?: number;
@@ -34,7 +35,7 @@ export interface ActivityStats {
   providedIn: 'root'
 })
 export class RegistroService {
-  private apiUrl = 'http://gateway:8080';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
