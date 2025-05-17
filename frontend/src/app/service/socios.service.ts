@@ -29,7 +29,7 @@ export interface Socios {
   providedIn: 'root'
 })
 export class SociosService {
-    private url = 'http://localhost:8080';
+    private url = 'http://gateway:8080';
     constructor(private http: HttpClient) { }
     getSocios(): Observable<Socios[]> {
         return this.http.get<ApiSocio[]>(`${this.url}/api/agents`)

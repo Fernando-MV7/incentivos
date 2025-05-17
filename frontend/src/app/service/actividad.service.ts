@@ -40,7 +40,7 @@ export interface User {
 })
 export class ActividadService {
 
-  private apiUrl = 'http://localhost:8080'
+  private apiUrl = 'http://gateway:8080'
   constructor(private http: HttpClient) { }
   
   getActividades(): Observable<Actividad[]> {
